@@ -1,7 +1,7 @@
 export TPU_NAME=boris
 export PROJECT_ID=tpu-2026
 export ZONE=us-east5-a
-export ACCELERATOR_TYPE=v6e-4
+export ACCELERATOR_TYPE=v6e-1
 export VERSION=v2-alpha-tpuv6e
 
 # One-time per region: enable Private Google Access on the default subnet
