@@ -55,6 +55,41 @@ gcloud compute firewall-rules create allow-iap-ssh --project=$PROJECT_ID --netwo
 gcloud alpha compute tpus tpu-vm ssh $TPU_NAME --project=$PROJECT_ID --zone=$ZONE --tunnel-through-iap
 ```
 
+## Python environment on the TPU VM
+
+Ubuntu 22.04 on these TPU VMs ships with `python3.10` and `python3.11` only —
+the tunix stack needs `python3.12`. The deadsnakes PPA is already configured,
+so `apt` can install it directly.
+
+```bash
+sudo apt-get install -y python3.12 python3.12-venv python3.12-dev
+python3.12 -m venv ~/venvs/tunix
+source ~/venvs/tunix/bin/activate
+pip install --upgrade pip setuptools wheel
+```
+
+Install the tunix / jax / flax stack. Order matters here:
+
+1. PyPI batch first.
+2. `jax` from git (the PyPI release lags behind what tunix expects).
+3. `tunix` and `qwix` from git — `tunix` pulls `flax` from PyPI as a
+   dependency, and downgrades `transformers` (→ 4.57) and `huggingface_hub`
+   (→ 0.36). Both downgrades are expected.
+4. Replace the PyPI `flax` with the GitHub version **after** tunix installs,
+   otherwise the tunix install would overwrite it again.
+
+```bash
+pip install python-dotenv kagglehub ipywidgets tensorflow tensorflow_datasets \
+            tensorboardX transformers grain huggingface_hub datasets 'numpy>2'
+pip install git+https://github.com/jax-ml/jax
+pip install git+https://github.com/google/tunix git+https://github.com/google/qwix
+pip uninstall -y flax
+pip install git+https://github.com/google/flax
+```
+
+Note: `python-dotenv` is the correct PyPI name for the `import dotenv` package.
+The bare `dotenv` package on PyPI is a different, unmaintained project.
+
 ## Run a Jupyter notebook
 
 Two terminals on your laptop.
@@ -68,7 +103,8 @@ gcloud alpha compute tpus tpu-vm ssh $TPU_NAME --project=$PROJECT_ID --zone=$ZON
 ```bash
 gcloud alpha compute tpus tpu-vm ssh $TPU_NAME --project=$PROJECT_ID --zone=$ZONE --tunnel-through-iap
 # then on the TPU:
-pip install jupyterlab    # one-time
+source ~/venvs/tunix/bin/activate
+pip install jupyterlab    # one-time, into the venv so the kernel sees tunix/jax/flax
 jupyter lab --no-browser --port=8888 --ip=127.0.0.1
 ```
 
