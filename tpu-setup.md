@@ -57,6 +57,11 @@ gcloud alpha compute tpus tpu-vm ssh $TPU_NAME --project=$PROJECT_ID --zone=$ZON
 
 ## Python environment on the TPU VM
 
+The fastest path is `./bootstrap.sh` from this repo — it installs python3.12,
+creates the venv, runs the install order below, pulls secrets from Secret
+Manager, and wires up `~/.bashrc`. The rest of this section explains what
+the script does and why; if you just want a working VM, run the script.
+
 Ubuntu 22.04 on these TPU VMs ships with `python3.10` and `python3.11` only —
 the tunix stack needs `python3.12`. The deadsnakes PPA is already configured,
 so `apt` can install it directly.
