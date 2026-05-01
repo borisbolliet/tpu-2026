@@ -87,6 +87,7 @@ kagglesdk==0.1.22
 keras==3.14.0
 lark==1.3.1
 libclang==18.1.1
+libtpu==0.0.40
 llvmlite==0.47.0
 markdown-it-py==4.0.0
 MarkupSafe==3.0.3

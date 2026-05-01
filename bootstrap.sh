@@ -33,6 +33,8 @@ source "$VENV/bin/activate"
 pip install --upgrade pip setuptools wheel
 
 echo "==> Installing pinned deps from requirements.txt"
+# requirements.txt includes libtpu — without it, jax silently falls back to CPU
+# on a TPU VM ("A Google TPU may be present ... Falling back to cpu").
 pip install -r "$REPO_DIR/requirements.txt"
 
 echo "==> Installing jax / tunix / qwix / flax from GitHub HEAD"

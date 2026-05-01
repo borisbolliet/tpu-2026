@@ -95,6 +95,19 @@ pip install git+https://github.com/google/flax
 Note: `python-dotenv` is the correct PyPI name for the `import dotenv` package.
 The bare `dotenv` package on PyPI is a different, unmaintained project.
 
+**`libtpu` is required for jax to see the TPU.** Installing `jax` from git does
+*not* pull `libtpu` (the TPU runtime), so without it jax silently falls back
+to CPU with this warning:
+```
+WARNING:jax._src.xla_bridge:A Google TPU may be present on this machine, but
+either a TPU-enabled jaxlib or libtpu is not installed. Falling back to cpu.
+```
+`requirements.txt` pins `libtpu`, so `bootstrap.sh` handles this. To verify:
+```python
+import jax; print(jax.default_backend(), jax.devices())
+# expect: tpu [TpuDevice(...), ...]
+```
+
 ## Run a Jupyter notebook
 
 Two terminals on your laptop.
