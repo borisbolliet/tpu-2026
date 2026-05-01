@@ -19,6 +19,9 @@ dist/
 # notebooks
 .ipynb_checkpoints/
 
+# datasets (downloaded by the notebook from kaggle/tfds at runtime)
+data/
+
 # editor
 .vscode/
 .idea/
